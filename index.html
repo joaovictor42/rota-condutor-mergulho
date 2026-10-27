@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rota Condutor de Barco de Mergulho</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: single reading column, numbered steps as a checklist, timeline and data as tables */
+:root{
+  --bg:#f5f7f8; --surface:#ffffff; --ink:#0f2530; --muted:#4f6470; --line:#d5dee3;
+  --accent:#d9480f; --accent-soft:#fdeee6; --sea:#0b5d73; --sea-soft:#e3f0f3; --warn:#8a5a00; --warn-soft:#fff4d6;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1a21; --surface:#112630; --ink:#e4edf0; --muted:#9db1ba; --line:#24404c;
+  --accent:#ff8a50; --accent-soft:#3a2216; --sea:#6cc4d9; --sea-soft:#123643; --warn:#f2c25b; --warn-soft:#3a2f12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1a21; --surface:#112630; --ink:#e4edf0; --muted:#9db1ba; --line:#24404c;
+  --accent:#ff8a50; --accent-soft:#3a2216; --sea:#6cc4d9; --sea-soft:#123643; --warn:#f2c25b; --warn-soft:#3a2f12; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:2.2rem;font-weight:700}
+h2{font-size:1.45rem;font-weight:700;display:flex;gap:10px;align-items:baseline}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font:500 .78rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sea)}
+.lead{font-size:1.08rem;color:var(--muted);max-width:65ch}
+.verdict{background:var(--sea-soft);border-left:4px solid var(--sea);padding:16px 18px;border-radius:4px;display:flex;flex-direction:column;gap:6px}
+.verdict strong{font-family:var(--display);font-size:1.15rem}
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;counter-reset:s}
+ol.steps>li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px 14px 58px;position:relative;display:flex;flex-direction:column;gap:6px}
+ol.steps>li::before{content:counter(s);position:absolute;left:16px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 .95rem/28px var(--display);text-align:center}
+.when{font:500 .76rem var(--mono);color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.93rem;min-width:520px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:700 .8rem var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.d{font-family:var(--mono);font-size:.84rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font:500 .7rem var(--mono);padding:1px 7px;border-radius:10px;letter-spacing:.04em;vertical-align:middle}
+.ok{background:var(--sea-soft);color:var(--sea)}
+.proj{background:var(--warn-soft);color:var(--warn)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card.pick{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:.93rem}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.note{font-size:.88rem;color:var(--muted)}
+.mono{font-family:var(--mono);font-size:.88rem}
+a{color:var(--sea)} a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+dl.gloss{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:.93rem}
+dl.gloss dt{font-family:var(--mono);font-weight:500}
+dl.gloss dd{margin:0;color:var(--muted)}
+</style>
+<style>*{box-sizing:border-box}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+<main>
+<header style="display:flex;flex-direction:column;gap:10px">
+  <span class="eyebrow">João Pessoa · PB · plano de ação · out/2026</span>
+  <h1>Rota para conduzir barco de mergulho com turistas</h1>
+  <p class="lead">Como ficar habilitado pela Marinha para assumir o barco da operadora de mergulho, levando mergulhadores pagantes aos naufrágios, enquanto a certificação de instrutor não sai.</p>
+</header>
+
+<div class="verdict">
+  <strong>Rota escolhida: curso CFAQ-MAC 2 da Capitania dos Portos da Paraíba</strong>
+  <p>É o curso gratuito da Marinha que forma o Marinheiro Auxiliar de Convés, categoria profissional de nível 2. Pela Marinha, aquaviário de convés de nível 2 para cima pode conduzir embarcação. Dura cerca de 3 semanas (a turma de 2025 teve aulas de 3 a 25 de novembro).</p>
+  <p><b>Plano B:</b> o curso CFAQ-MOC do IFPB em Cabedelo. Também é gratuito, mas leva cerca de 7 meses entre aulas e estágio.</p>
+  <p><b>O Arrais-Amador não serve:</b> é uma habilitação de lazer e não vale para levar cliente pagante.</p>
+</div>
+
+<section>
+  <h2>Passo a passo</h2>
+  <ol class="steps">
+    <li><span class="when">Esta semana</span><h3>Confirmar a categoria exigida na Capitania dos Portos (Cabedelo)</h3>
+      <p>Vá à Capitania com o nome e o número de inscrição do barco da operadora. Faça estas 4 perguntas:</p>
+      <ul>
+        <li>Qual categoria mínima o <b>CTS</b> deste barco exige para quem conduz? É MAC, MOC ou outra?</li>
+        <li>O barco está inscrito para atividade comercial (passageiros/turismo)?</li>
+        <li>Também preciso do curso <b>ESEP</b> (Segurança de Embarcações de Passageiros)?</li>
+        <li>Quando abre a próxima turma de CFAQ-MAC/MAM 2 na Paraíba? Tem turma aberta agora?</li>
+      </ul></li>
+    <li><span class="when">Esta semana</span><h3>Juntar os documentos</h3>
+      <ul>
+        <li>RG ou CNH, e CPF</li>
+        <li>Histórico escolar do Ensino Fundamental II <b>com as notas</b> de Português e Matemática do 6º ao 9º ano. É ele que te classifica.</li>
+        <li>Certidão de quitação eleitoral (no site do TSE) e reservista ou dispensa militar</li>
+        <li>Certidão de nascimento ou casamento, comprovante de residência e foto 3x4 com fundo branco</li>
+      </ul></li>
+    <li><span class="when">Próximas 2 semanas</span><h3>Garantir o teste físico e o exame médico</h3>
+      <ul>
+        <li>Teste físico: nadar 25 m em qualquer estilo, sem tempo, e flutuar 10 min sem ajuda</li>
+        <li>Na hora do teste, levar um atestado médico de no máximo 30 dias</li>
+        <li>Na matrícula, levar o <b>ASO</b> (exame do médico do trabalho, padrão NR-30). Só faça depois que o edital sair, para não vencer.</li>
+      </ul></li>
+    <li><span class="when">Toda semana até abrir</span><h3>Acompanhar os dois editais</h3>
+      <ul>
+        <li>Capitania PB, cursos aquaviários: <a href="https://www.marinha.mil.br/cppb/cursos_aquaviarios" target="_blank" rel="noopener">marinha.mil.br/cppb/cursos_aquaviarios</a></li>
+        <li>IFPB, concursos: <a href="https://concursos.ifpb.edu.br" target="_blank" rel="noopener">concursos.ifpb.edu.br</a>, onde a inscrição é feita, e o portal do EPM em <a href="https://www.ifpb.edu.br/cabedelocentro/cursos/epm" target="_blank" rel="noopener">ifpb.edu.br/cabedelocentro/cursos/epm</a></li>
+      </ul></li>
+    <li><span class="when">Quando abrir</span><h3>Inscrever-se na primeira turma que abrir</h3>
+      <p>Dê prioridade ao MAC 2 da Capitania. Se o MOC do IFPB abrir antes e a Capitania tiver confirmado que ele serve para o barco, inscreva-se nele. A inscrição é gratuita e online, e os documentos vão em PDF de até 1 MB cada.</p></li>
+    <li><span class="when">Durante a espera</span><h3>Trabalhar a bordo como ajudante</h3>
+      <p>Trabalhe no barco de mergulho com amarração, apoio aos mergulhadores e equipamento. Assim você ganha renda, conhece os pontos de mergulho e o dono já te conhece quando a habilitação sair.</p></li>
+    <li><span class="when">Ao concluir</span><h3>Assumir o barco</h3>
+      <p>Mostre ao dono a <b>CIR</b> (caderneta profissional) e o certificado. Ele confere no CTS do barco se a sua categoria cobre a função de condutor e te registra na tripulação.</p></li>
+  </ol>
+</section>
+
+<section>
+  <h2>Os dois cursos lado a lado</h2>
+  <div class="grid2">
+    <div class="card pick">
+      <span class="eyebrow">Rota principal</span>
+      <h3>CFAQ-MAC/MAM 2 · Capitania PB</h3>
+      <dl class="kv">
+        <dt>Forma</dt><dd>Marinheiro Auxiliar de Convés (nível 2)</dd>
+        <dt>Duração</dt><dd>cerca de 3 semanas <span class="tag ok">2025: 3–25/nov</span></dd>
+        <dt>Horário</dt><dd>não publicado; os cursos curtos costumam ser em horário integral <span class="tag proj">confirmar</span></dd>
+        <dt>Turmas</dt><dd>3 ou mais por ano na PB (em 2026 houve turmas 1, 2 e 3, a 3 em Boqueirão)</dd>
+        <dt>Custo</dt><dd>gratuito</dd>
+        <dt>Seleção</dt><dd>documentos e teste físico de natação</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Plano B</span>
+      <h3>CFAQ-MOC · IFPB Cabedelo</h3>
+      <dl class="kv">
+        <dt>Forma</dt><dd>Moço de Convés</dd>
+        <dt>Duração</dt><dd>539 h de aula, mais 2 meses (352 h) de estágio embarcado em mar aberto</dd>
+        <dt>Horário</dt><dd>tarde e noite, presencial, no Campus Cabedelo Centro (Rua Duque de Caxias, s/n)</dd>
+        <dt>Turmas</dt><dd>1 por ano, 30 vagas</dd>
+        <dt>Custo</dt><dd>gratuito, sem alojamento, alimentação ou ajuda de custo</dd>
+        <dt>Seleção</dt><dd>média das notas de Português e Matemática do 6º ao 9º ano, mais o teste físico</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Pré-requisitos</h2>
+  <ul>
+    <li>Ser brasileiro e ter 18 anos ou mais na matrícula</li>
+    <li>Ensino Fundamental completo (9º ano). Quem fez supletivo ou ENCCEJA também pode.</li>
+    <li>Estar em dia com as obrigações eleitorais e militares</li>
+    <li>Passar no teste físico: nadar 25 m e flutuar 10 min</li>
+    <li>Ter o ASO de aquaviário (NR-30) na matrícula</li>
+  </ul>
+  <p class="note">Fonte: Edital IFPB 66/2026. Os editais de MAC 2 de outras Capitanias pedem o mesmo; confirme no edital da Capitania da Paraíba.</p>
+</section>
+
+<section>
+  <h2>Custo do seu bolso</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Item</th><th>Valor</th><th>Obs.</th></tr></thead>
+    <tbody>
+      <tr><td>Curso e inscrição</td><td class="d">R$ 0</td><td>gratuitos, pela Marinha</td></tr>
+      <tr><td>ASO, médico do trabalho (NR-30)</td><td class="d">R$ 80–200</td><td>estimativa de clínica particular</td></tr>
+      <tr><td>Atestado para o teste físico</td><td class="d">R$ 0–150</td><td>SUS ou consulta particular</td></tr>
+      <tr><td>Transporte até Cabedelo</td><td class="d">variável</td><td>3 semanas (MAC) ou cerca de 5 meses (MOC)</td></tr>
+      <tr><td>Recomendado: primeiros socorros e oxigênio para mergulho</td><td class="d">R$ 300–900</td><td>não é exigido pela Marinha, mas é bem visto pelas operadoras</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Os valores marcados como estimativa são referências de mercado, não números oficiais.</p>
+</section>
+
+<section>
+  <h2>Projeção de editais e datas</h2>
+  <p class="note"><span class="tag ok">confirmado</span> já aconteceu e está em edital oficial · <span class="tag proj">projeção</span> estimativa baseada nos anos anteriores</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Quando</th><th>O quê</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="d">set–out/2023</td><td>Capitania PB: inscrições MAC/MAM (20/09 a 20/10)</td><td><span class="tag ok">confirmado</span></td></tr>
+      <tr><td class="d">22/09/2025</td><td>Capitania PB: edital MAC/MAM 2; aulas de 3 a 25/11/2025</td><td><span class="tag ok">confirmado</span></td></tr>
+      <tr><td class="d">1–17/05/2026</td><td>IFPB: inscrições MOC; teste físico 19/06; aulas a partir de 16/07/2026</td><td><span class="tag ok">confirmado</span></td></tr>
+      <tr><td class="d">jun/2026</td><td>Capitania PB: lista para o teste físico das turmas MAC 1 e 2/2026</td><td><span class="tag ok">confirmado</span></td></tr>
+      <tr><td class="d">nov–dez/2026</td><td>Capitania PB: possível última turma de 2026. Pergunte já.</td><td><span class="tag proj">projeção</span></td></tr>
+      <tr><td class="d">mar–mai/2027</td><td>Capitania PB: edital das primeiras turmas MAC 2 de 2027</td><td><span class="tag proj">projeção</span></td></tr>
+      <tr><td class="d">fim abr/2027</td><td>IFPB: edital MOC 2027; inscrições na 1ª quinzena de maio</td><td><span class="tag proj">projeção</span></td></tr>
+      <tr><td class="d">jun/2027</td><td>IFPB: teste físico; matrícula no início de julho</td><td><span class="tag proj">projeção</span></td></tr>
+      <tr><td class="d">meados jul/2027</td><td>IFPB: início das aulas do MOC</td><td><span class="tag proj">projeção</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Quanto tempo até estar habilitado</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Cenário</th><th>Caminho</th><th>Habilitado em</th></tr></thead>
+    <tbody>
+      <tr><td><b>Melhor caso</b></td><td>Ainda há turma de MAC 2 aberta na PB em nov/dez de 2026</td><td class="d">dez/2026 a jan/2027</td></tr>
+      <tr><td><b>Mais provável</b></td><td>MAC 2 numa das primeiras turmas de 2027: edital, cerca de 1 mês de seleção e 3 semanas de curso</td><td class="d">mai a jul/2027</td></tr>
+      <tr><td><b>Plano B</b></td><td>MOC no IFPB: inscrição em mai/2027, aulas de jul a dez e 2 meses de estágio</td><td class="d">fev/2028</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Depois do curso, a CIR é emitida pela Capitania. Reserve de 2 a 4 semanas para isso.</p>
+</section>
+
+<section>
+  <h2>Contatos</h2>
+  <ul>
+    <li><b>Capitania dos Portos da Paraíba</b>, em Cabedelo: <a href="https://www.marinha.mil.br/cppb/" target="_blank" rel="noopener">marinha.mil.br/cppb</a></li>
+    <li><b>IFPB, Comissão de Concursos (COMPEC)</b>: <span class="mono">(83) 99940-1033</span> · <span class="mono">(83) 99175-6465</span> · <span class="mono">compec@ifpb.edu.br</span></li>
+  </ul>
+</section>
+
+<section>
+  <h2>Siglas</h2>
+  <dl class="gloss">
+    <dt>Aquaviário</dt><dd>profissional da Marinha Mercante que trabalha embarcado</dd>
+    <dt>CFAQ</dt><dd>Curso de Formação de Aquaviários, o curso de entrada na profissão</dd>
+    <dt>MAC</dt><dd>Marinheiro Auxiliar de Convés, a categoria que conduz embarcações pequenas</dd>
+    <dt>MOC</dt><dd>Moço de Convés, tripulante de convés que entra pelo curso longo do IFPB</dd>
+    <dt>CTS</dt><dd>Cartão de Tripulação de Segurança, documento do barco que diz quem precisa estar a bordo e com qual categoria</dd>
+    <dt>CIR</dt><dd>Caderneta de Inscrição e Registro, o documento profissional do aquaviário</dd>
+    <dt>ASO</dt><dd>Atestado de Saúde Ocupacional, feito por médico do trabalho</dd>
+    <dt>ESEP</dt><dd>curso de Segurança de Embarcações de Passageiros</dd>
+    <dt>TSF</dt><dd>Teste de Suficiência Física (natação e flutuação)</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Fontes</h2>
+  <ul class="note">
+    <li><a href="https://estudante.ifpb.edu.br/media/Edital_66_de_Abertura_do_Processo_EPM_retificado_pelo_Edital_101-2026.pdf" target="_blank" rel="noopener">IFPB, Edital 66/2026 (CFAQ-MOC), com retificações</a></li>
+    <li><a href="https://www.marinha.mil.br/cppb/cursos_aquaviarios" target="_blank" rel="noopener">Capitania dos Portos da Paraíba, cursos aquaviários</a></li>
+    <li><a href="https://www.marinha.mil.br/cppb/node/193" target="_blank" rel="noopener">Capitania PB, processo seletivo CFAQ-MAC/MAM</a></li>
+    <li><a href="https://www.marinha.mil.br/cpma/node/11" target="_blank" rel="noopener">Marinha (CPMA), CFAQ-MAC/MAM e progressão de nível</a></li>
+    <li><a href="https://www.marinha.mil.br/cfgo/amador" target="_blank" rel="noopener">Marinha, habilitação de Amador</a></li>
+  </ul>
+</section>
+</main>
+</body>
+</html>
